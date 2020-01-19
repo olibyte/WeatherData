@@ -19,7 +19,22 @@ namespace Weather
 
         public static IEnumerable<WeatherObservation> ReadAll(TextReader text, Action<string> errorHandler = null)
         {
-            throw new NotImplementedException();
+            string line = null;
+            while((line = text.ReadLine()) != null)
+            {
+                if(WeatherObservation.TryParse(line, out WeatherObservation wo))
+                {
+                    yield return wo;
+                }
+                else
+                {
+                    try
+                    {
+                        errorHandler?.Invoke(line);
+                    }
+                    catch { }
+                }
+            }
         }
     }
 }
