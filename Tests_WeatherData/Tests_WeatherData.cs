@@ -102,9 +102,25 @@ namespace Tests_WeatherData
                 // Transform
                 // Load
 
-                // MathNet.Numerics.Fit.Line(...);
+                var data = from wo in WeatherData.ReadRange(text, start, end) //extract
+                           select new //transforming
+                           {
+                               Hours = (wo.TimeStamp - start).TotalHours,
+                               wo.Barometric_Pressure
+                           };
 
-                throw new NotImplementedException();
+                var arrX = new List<double>();
+                var arrY = new List<double>();
+
+                foreach (var wo in data) //load
+                {
+                    arrX.Add(wo.Hours);
+                    arrY.Add(wo.Barometric_Pressure);
+                }
+
+                var (intersect, slope) = MathNet.Numerics.Fit.Line(arrX.ToArray(), arrY.ToArray());
+
+                Check.That(slope).IsLessThan(0);
             }
         }
     }
